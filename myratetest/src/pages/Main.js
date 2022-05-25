@@ -42,7 +42,6 @@ function Main(props) {
 
         rate_sum += num;
 
-        // day는 요일 텍스트가, rate는 랜덤 평점이 들어가요!
         return {
             week: d,
             rate: num,

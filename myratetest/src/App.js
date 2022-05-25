@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import Main from './Main';
-import Day from './Day';
+import Main from './pages/Main';
+import Day from './pages/Day';
 import { useState } from 'react';
 
 function App() {
