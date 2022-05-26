@@ -36,29 +36,29 @@ const DayBox = styled.span`
 
 
 function Day(props) {
-    let [range, setRange] = useState([0, 1, 2, 3, 4]);
-    let [idx, setIdx] = useState(0);
-    let navigate = useNavigate();
+  let [range, setRange] = useState([0, 1, 2, 3, 4]);
+  let [idx, setIdx] = useState(0);
+  let navigate = useNavigate();
 
-    let { id } = useParams()
+  let { id } = useParams()
 
-    return (
-        <div>
-            <h3>
-                <DayBox>{props.day[id]}요일</DayBox> 평점 남기기
-            </h3>
-            <LineUp>
-                {
-                    range.map((range, i) => {
-                        return (
-                            <Circle onClick={() => { setIdx(i) }} style={{ backgroundColor: i <= idx ? 'yellow' : 'rgb(214, 210, 210' }}></Circle>
-                        )
-                    })
-                }
-            </LineUp>
-            <RateSubmitBtn onClick={() => { navigate('/') }}>평점 남기기</RateSubmitBtn>
-        </div>
-    )
+  return (
+    <div>
+      <h3>
+        <DayBox>{props.day[id]}요일</DayBox> 평점 남기기
+      </h3>
+      <LineUp>
+        {
+          range.map((range, i) => {
+            return (
+              <Circle onClick={() => { setIdx(i) }} style={{ backgroundColor: i <= idx ? 'yellow' : 'rgb(214, 210, 210' }}></Circle>
+            )
+          })
+        }
+      </LineUp>
+      <RateSubmitBtn onClick={() => { navigate('/') }}>평점 남기기</RateSubmitBtn>
+    </div>
+  )
 }
 
 export default Day
