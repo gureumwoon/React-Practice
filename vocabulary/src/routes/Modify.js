@@ -14,10 +14,6 @@ function Modify() {
                         <input id="word" type="text" />
                     </div>
                     <div>
-                        <label for="pronounce">발음</label>
-                        <input id="pronounce" type="text" />
-                    </div>
-                    <div>
                         <label for="mean">의미</label>
                         <input id="mean" type="text" />
                     </div>
