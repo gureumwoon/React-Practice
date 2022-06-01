@@ -1,43 +1,50 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faPencil, faX } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { deleteVoca, deleteVocaFB, completedVocaFB } from '../redux/modules/voca'
+function Card() {
 
-function Card(props) {
-
-    let state = useSelector((state) => state.wordCard)
-    let dispatch = useDispatch()
     let navigate = useNavigate();
+
+    const dispatch = useDispatch();
+
+    const vocaData = useSelector((state) => state.voca.list);
+
 
     return (
         <CardContainer>
             {
-                state.map((c, i) => {
+                vocaData && vocaData.map((v, i) => {
                     return (
-                        <CardItem key={i}>
+                        <CardItem completed={v.completed} key={i}>
                             <div className='article-header'>
                                 <div>
-                                    <h4>{state[i].word}</h4>
+                                    <h4>{vocaData[i].word}</h4>
                                     <p>[어쩌구]</p>
                                 </div>
                                 <div className='icon-container'>
-                                    <button>
+                                    <button onClick={() => {
+                                        dispatch(completedVocaFB(vocaData[i].id))
+                                    }}>
                                         <FontAwesomeIcon icon={faCheck} />
                                     </button>
                                     <button onClick={() => { navigate(`/modify/${i}`) }} style={{ marginLeft: "6px" }}>
                                         <FontAwesomeIcon icon={faPencil} />
                                     </button>
-                                    <button style={{ marginLeft: "6px" }}>
+                                    <button onClick={() => {
+                                        dispatch(deleteVocaFB(vocaData[i].id))
+                                    }} style={{ marginLeft: "6px" }}>
                                         <FontAwesomeIcon icon={faX} />
                                     </button>
                                 </div>
                             </div>
                             <div className='article-content'>
-                                <p>드디어, 결국</p>
-                                <ContentText>하하하ㅏ하하하ㅏ하ㅏ하하하</ContentText>
-                                <ContentText>비록 이 책은 낙장이 있으나 필경 진귀한 책이다</ContentText>
+                                <p>{vocaData[i].meaning}</p>
+                                <ContentText>{vocaData[i].sentence}</ContentText>
+                                <ContentText>{vocaData[i].trans}</ContentText>
                             </div>
                         </CardItem>
                     )
@@ -50,17 +57,23 @@ function Card(props) {
 
 const CardContainer = styled.div`
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content:center;
+  /* display: flex; */
+  display: grid;
+  grid-template-columns:repeat(auto-fit, 440px);
+  justify-items: center;
   gap: 1rem;
+  /* flex-wrap: wrap;
+  justify-content:center;
+  gap: 1rem; */
 `
 
 const CardItem = styled.article`
-  width: 400px;
+  width: 440px;
   border: 2px solid #53ad9a;
   border-radius: 15px;
   padding: 15px 15px;
+  background-color: ${(props) => props.completed ? "#53ad9a" : "transparent"};
+  color: ${(props) => props.completed ? "white" : "black"};
   .article-header {
     display: flex;
     justify-content: space-between;

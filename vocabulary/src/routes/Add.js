@@ -1,31 +1,58 @@
 import React from 'react';
 import styled from 'styled-components';
-import Header from '../modules/Header';
+import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { createVoca, addVocaFB } from "../redux/modules/voca";
 
 function Modify() {
+
+    let navigate = useNavigate();
+
+    const data = useSelector((state) => state.voca);
+    const dispatch = useDispatch();
+
+    const wordRef = useRef()
+    const meaningRef = useRef()
+    const sentenceRef = useRef()
+    const transRef = useRef()
+
+    const addVoca = (e) => {
+        e.preventDefault()
+        const completed = false;
+        const word = wordRef.current.value;
+        const meaning = meaningRef.current.value;
+        const sentence = sentenceRef.current.value;
+        const trans = transRef.current.value;
+        // dispatch(createVoca({ completed, word, meaning, sentence, trans }));
+        dispatch(addVocaFB({ completed, word, meaning, sentence, trans }))
+        navigate('/')
+    }
+
     return (
         <div>
             <Header />
             <Section>
                 <Form>
-                    <p>단어 수정하기</p>
+                    <p>단어 추가하기</p>
                     <div>
                         <label for="word">단어</label>
-                        <input id="word" type="text" />
+                        <input ref={wordRef} id="word" type="text" />
                     </div>
                     <div>
                         <label for="mean">의미</label>
-                        <input id="mean" type="text" />
+                        <input ref={meaningRef} id="mean" type="text" />
                     </div>
                     <div>
                         <label for="sentence">예문</label>
-                        <input id="sentence" type="text" />
+                        <input ref={sentenceRef} id="sentence" type="text" />
                     </div>
                     <div>
                         <label for="trans">해석</label>
-                        <input id="trans" type="text" />
+                        <input ref={transRef} id="trans" type="text" />
                     </div>
-                    <button>수정하기</button>
+                    <button type="submit" onClick={addVoca}>추가하기</button>
                 </Form>
             </Section>
         </div>

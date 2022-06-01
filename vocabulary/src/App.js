@@ -4,27 +4,28 @@ import styled from 'styled-components';
 import backgroundImg from './assets/bg4.jpg';
 import { Routes, Route } from 'react-router-dom'
 import Main from './routes/Main'
-import Modify from './routes/Modify';
-import { db } from './firebase';
-import { collection, getDoc, getDocs, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import Add from './routes/Add';
+import { loadVocaFB } from "./redux/modules/voca"
+import { useDispatch } from 'react-redux';
+
 
 
 
 function App() {
 
-  useEffect(async () => {
-    console.log(db);
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(loadVocaFB())
   }, [])
 
-  const [card, setCard] = useState([1, 2, 3, 4, 5, 6]);
 
   return (
     <Container>
 
       <Routes>
-        <Route path="/" element={<Main card={card} />} />
-        <Route path="/modify/:id" element={<Modify card={card} />} />
+        <Route path="/" element={<Main />} />
+        <Route path="/add" element={<Add />} />
       </Routes>
 
     </Container>
