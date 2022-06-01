@@ -103,7 +103,7 @@ export default function reducer(state = initialState, action = {}) {
         case COMPLETE: {
             const new_voca_list = state.list.map((v, idx) => {
                 if (action.voca_index === idx) {
-                    return { ...v, completed: true }
+                    return { ...v, completed: !v.completed }
                 } else {
                     return v;
                 }
