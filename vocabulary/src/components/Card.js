@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,11 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { deleteVoca, deleteVocaFB, completedVocaFB } from '../redux/modules/voca'
 function Card() {
 
-    let navigate = useNavigate();
 
     const dispatch = useDispatch();
 
     const vocaData = useSelector((state) => state.voca.list);
+
+    let navigate = useNavigate();
+
+
 
 
     return (
@@ -23,7 +25,6 @@ function Card() {
                             <div className='article-header'>
                                 <div>
                                     <h4>{vocaData[i].word}</h4>
-                                    <p>[어쩌구]</p>
                                 </div>
                                 <div className='icon-container'>
                                     <button onClick={() => {
@@ -31,7 +32,7 @@ function Card() {
                                     }}>
                                         <FontAwesomeIcon icon={faCheck} />
                                     </button>
-                                    <button onClick={() => { navigate(`/modify/${i}`) }} style={{ marginLeft: "6px" }}>
+                                    <button onClick={() => { navigate(`/modify/${vocaData[i].id}`) }} style={{ marginLeft: "6px" }}>
                                         <FontAwesomeIcon icon={faPencil} />
                                     </button>
                                     <button onClick={() => {
@@ -82,9 +83,6 @@ const CardItem = styled.article`
       font-size: 24px;
       font-weight: bold;
       margin-bottom: 7px;
-    }
-    div>p {
-      font-size: 14px;
     }
   }
 `

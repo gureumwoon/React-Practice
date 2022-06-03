@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { createVoca, addVocaFB } from "../redux/modules/voca";
 
-function Modify() {
+function ADD() {
 
     let navigate = useNavigate();
 
@@ -25,7 +25,6 @@ function Modify() {
         const meaning = meaningRef.current.value;
         const sentence = sentenceRef.current.value;
         const trans = transRef.current.value;
-        // dispatch(createVoca({ completed, word, meaning, sentence, trans }));
         dispatch(addVocaFB({ completed, word, meaning, sentence, trans }))
         navigate('/')
     }
@@ -111,4 +110,4 @@ const Form = styled.form`
   }
 `
 
-export default Modify;
+export default ADD;

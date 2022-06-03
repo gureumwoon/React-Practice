@@ -5,13 +5,16 @@ import backgroundImg from './assets/bg4.jpg';
 import { Routes, Route } from 'react-router-dom'
 import Main from './routes/Main'
 import Add from './routes/Add';
+import Modify from './routes/Modify';
 import { loadVocaFB } from "./redux/modules/voca"
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 
 
 function App() {
+
+  const vocaData = useSelector((state) => state.voca.list);
 
   const dispatch = useDispatch();
 
@@ -26,6 +29,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/add" element={<Add />} />
+        <Route path="/modify/:id" element={<Modify vocaData={vocaData} />} />
       </Routes>
 
     </Container>

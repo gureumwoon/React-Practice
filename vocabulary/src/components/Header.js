@@ -4,7 +4,7 @@ import styled from 'styled-components';
 function Header() {
     return (
         <Title>
-            <h1 style={{ margin: 0 }}>중국어 단어장</h1>
+            <h1 style={{ margin: 0 }}>단어장</h1>
         </Title>
     )
 }
