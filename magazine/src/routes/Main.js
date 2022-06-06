@@ -1,21 +1,19 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import HomeIcon from '@mui/icons-material/Home';
-import Button from '@mui/material/Button';
-
+import CreateIcon from '@mui/icons-material/Create';
+import Nav from '../components/Nav'
+import PostCard from '../components/PostCard';
 
 function Main() {
+    const navigate = useNavigate();
     return (
         <Section>
-            <Header>
-                <a href="">
-                    <HomeIcon color="primary" fontSize="large" />
-                </a>
-                <div>
-                    <Button variant="contained">회원가입</Button>
-                    <Button sx={{ ml: "5px" }} variant="contained">로그인</Button>
-                </div>
-            </Header>
+            <Nav />
+            <PostCard />
+            <CreateBtn onClick={() => { navigate("/upload") }}>
+                <CreateIcon />
+            </CreateBtn>
         </Section >
     )
 }
@@ -26,11 +24,18 @@ const Section = styled.section`
   margin: 0 auto;
 `
 
-const Header = styled.header`
-  width: 100%;
-  display: flex;
-  padding:16px;
-  justify-content: space-between;
+const CreateBtn = styled.button`
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  background-color: #1B9CFC;
+  border:none;
+  color: white;
 `
+
+
 
 export default Main

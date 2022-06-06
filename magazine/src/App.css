@@ -2,6 +2,16 @@
   text-align: center;
 }
 
+section {
+  width: 50%;
+  height: 100vh;
+  margin: 0 auto;
+}
+
 * {
   box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
 }
