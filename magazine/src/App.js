@@ -23,7 +23,7 @@ function App() {
     onAuthStateChanged(auth, loginCheck)
   }, [])
 
-  console.log(auth.currentUser);
+  // console.log(auth.currentUser);
 
   return (
     <div className="App">

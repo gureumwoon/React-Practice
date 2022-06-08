@@ -1,20 +1,27 @@
-import React, { useRef, useState } from 'react'
-import { auth, db } from './../shared/firebase';
-import { getDocs, where, query, collection } from "firebase/firestore"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import Nav from '../components/Nav'
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { apiKey } from '../shared/firebase'
+import { loginFB } from '../redux/modules/user';
 
 function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const idRef = useRef(null);
-    const pwRef = useRef(null);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const state = useSelector((state) => state.user)
+    const _session_key = `firebase:authUser:${apiKey}:[DEFAULT]`;
+    const is_session = sessionStorage.getItem(_session_key) ? true : false;
+
+
+    const emailCheck = (email) => {
+        let reg = /^[0-9a-zA-Z]([-_.0-9a-zA-Z])*@[0-9a-zA-Z]([-_.0-9a-zA-Z])*.([a-zA-Z])*/;
+        return reg.test(email);
+    };
 
     const onChange = (event) => {
         const { target: { name, value }, } = event;
@@ -27,22 +34,16 @@ function Login() {
 
     const onSubmit = async (event) => {
         event.preventDefault();
-        console.log(idRef.current.value, pwRef.current.value);
-        try {
-            const user = await signInWithEmailAndPassword(
-                auth,
-                idRef.current.value,
-                pwRef.current.value
-            );
-            console.log(user)
-
-            const user_docs = await getDocs(query(collection(db, "users"), where("user_id", "==", user.user.email)));
-            user_docs.forEach(u => { console.log(u.data()) })
-            navigate("/")
-
-        } catch (error) {
-            console.log(error)
+        if (email === '' || password === '') {
+            alert('내용을 입력하세요.')
+            return;
         }
+        if (!emailCheck(email)) {
+            alert('이메일 형식이 다릅니다.')
+            return;
+        }
+        dispatch(loginFB(email, password))
+        navigate("/")
     }
 
     return (
@@ -57,7 +58,6 @@ function Login() {
                         name="email"
                         id="id"
                         required
-                        ref={idRef}
                         value={email}
                         onChange={onChange}
                     />
@@ -69,12 +69,11 @@ function Login() {
                         type="password"
                         id="pw"
                         required
-                        ref={pwRef}
                         value={password}
                         onChange={onChange}
                     />
                 </label>
-                <JoinBtn onClick={onSubmit} type="submit">로그인</JoinBtn>
+                <JoinBtn onClick={onSubmit} disabled={!(emailCheck(email) && password.length > 7)} type="submit">로그인</JoinBtn>
             </FormSection>
         </section>
     )
@@ -106,7 +105,7 @@ const Input = styled.input`
 
 const JoinBtn = styled.button`
   width: 40%;
-  background-color: rgba(27, 156, 252, 0.55);
+  background-color: ${(props) => props.disabled ? "rgba(27, 156, 252, 0.55)" : "#1B9CFC "};
   color: white;
   border: none;
   cursor: pointer;

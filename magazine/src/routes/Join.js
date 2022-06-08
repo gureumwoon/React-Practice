@@ -1,38 +1,42 @@
-import { useRef } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux'
 import styled from 'styled-components';
 import Nav from '../components/Nav'
 import { useNavigate } from 'react-router-dom';
+import { signupFB } from '../redux/modules/user';
 
 function Join() {
     const navigate = useNavigate()
+    const dispatch = useDispatch();
 
-    const idRef = useRef(null);
-    const nameRef = useRef(null);
-    const pwRef = useRef(null);
-    const pw2Ref = useRef(null);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [password2, setPassword2] = useState('');
+    const [name, setName] = useState('');
 
-    // const signup = async (event) => {
-    //     event.preventDefault();
-    //     try {
-    //         const user = await createUserWithEmailAndPassword(
-    //             auth,
-    //             idRef.current.value,
-    //             pwRef.current.value,
-    //         );
-    //         console.log(user)
 
-    //         const user_doc = await addDoc(collection(db, "users"), {
-    //             user_id: user.user.email,
-    //             name: nameRef.current.value,
-    //         });
-    //         console.log(user_doc.id)
-    //         window.alert(`환영해요! ${nameRef.current.value}님 :)! 로그인도 부탁드려요!`);
-    //         navigate("/login")
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
+    const emailCheck = (email) => {
+        let reg = /^[0-9a-zA-Z]([-_.0-9a-zA-Z])*@[0-9a-zA-Z]([-_.0-9a-zA-Z])*.([a-zA-Z])*/;
+        return reg.test(email);
+    };
+
+    const signup = () => {
+        if (email === '' || password === '' || name === '') {
+            alert('내용을 입력하세요')
+            return;
+        }
+        if (!emailCheck(email)) {
+            alert('이메일을 형식에 맞게 작성해주세요.')
+            return;
+        }
+        if (password !== password2) {
+            alert('비밀번호가 일치하지 않습니다.')
+            return;
+        }
+        dispatch(signupFB(email, password, name))
+        window.alert(`환영해요! ${name}님 :)! 로그인도 부탁드려요!`);
+        navigate("/login")
+    }
 
     return (
         <section>
@@ -41,22 +45,23 @@ function Join() {
                 <h1>회원가입</h1>
                 <label htmlFor="id">
                     <p>아이디</p>
-                    <Input ref={idRef} id="id" type="email" required />
+                    <Input id="id" type="email" required onChange={(e) => { setEmail(e.target.value) }} />
                 </label>
                 <label htmlFor="nic">
                     <p>닉네임</p>
-                    <Input ref={nameRef} id="nic" required />
+                    <Input id="nic" required onChange={(e) => { setName(e.target.value) }} />
                 </label>
                 <label htmlFor="pw">
                     <p>비밀번호</p>
-                    <Input ref={pwRef} id="pw" required type="password" />
+                    <Input id="pw" required type="password" onChange={(e) => { setPassword(e.target.value) }} />
                 </label>
                 <label htmlFor="pw2">
                     <p>비밀번호 확인</p>
-                    <Input ref={pw2Ref} id="pw2" type="password" required />
+                    <Input id="pw2" type="password" required onChange={(e) => { setPassword2(e.target.value) }} />
                 </label>
                 <JoinBtn
-                // onClick={signup}
+                    onClick={signup}
+                    disabled={!(emailCheck(email) && name.length > 7 && password.length > 7 && password2.length > 7)}
                 >회원가입</JoinBtn>
             </FormSection>
         </section>
@@ -89,7 +94,7 @@ const Input = styled.input`
 
 const JoinBtn = styled.button`
   width: 40%;
-  background-color: rgba(27, 156, 252, 0.55);
+  background-color:${(props) => props.disabled ? "rgba(27, 156, 252, 0.55)" : "#1B9CFC "};
   color: white;
   border: none;
   cursor: pointer;

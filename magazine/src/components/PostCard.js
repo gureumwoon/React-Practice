@@ -2,29 +2,31 @@ import React from 'react'
 import styled from 'styled-components';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
-function PostCard() {
-    return (
-        <>
-            <ProfileSection>
-                <div>
-                    <ProfileImg />
-                    <p>woon</p>
-                </div>
-                <p>2022-06-04 12:38:11</p>
-            </ProfileSection>
-            <ContentSection>
-                <p></p>
-                <img alt="" />
-            </ContentSection>
-            <FavoriteSection>
-                <div>
-                    <p>좋아요 5개</p>
-                    <p>댓글 4개</p>
-                </div>
-                <FavoriteIcon />
-            </FavoriteSection>
-        </>
-    )
+function PostCard(props) {
+    if (props.layout === "right") {
+        return (
+            <>
+                <ProfileSection>
+                    <div>
+                        <ProfileImg />
+                        <p>{props.user_info.name}</p>
+                    </div>
+                    <p>{props.insert_date}</p>
+                </ProfileSection>
+                <ContentSection>
+                    <p>{props.contents}</p>
+                    <img src={props.image_url} alt="" />
+                </ContentSection>
+                <FavoriteSection>
+                    <div>
+                        <p>좋아요 5개</p>
+                        <p>댓글 4개</p>
+                    </div>
+                    <FavoriteIcon />
+                </FavoriteSection>
+            </>
+        )
+    }
 }
 
 const ProfileSection = styled.div`

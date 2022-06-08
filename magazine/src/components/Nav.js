@@ -5,34 +5,34 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import Button from '@mui/material/Button';
+import { apiKey } from '../shared/firebase'
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutFB } from '../redux/modules/user';
 
 function Nav() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const state = useSelector((state) => state.user)
+    const _session_key = `firebase:authUser:${apiKey}:[DEFAULT]`;
+    const is_session = sessionStorage.getItem(_session_key) ? true : false;
 
-    const loginCheck = async (user) => {
-        if (user) {
-            setIsLoggedIn(true);
-        } else {
-            setIsLoggedIn(false);
-        }
-    }
-
-    useEffect(() => {
-        onAuthStateChanged(auth, loginCheck)
-    }, [])
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     return (
         <Header>
             <Link to="/">
                 <HomeIcon color="primary" fontSize="large" />
             </Link>
-            {isLoggedIn ? (<ProfileSection>
+            {state.is_login && is_session ? (<ProfileSection>
                 <div>
                     <ProfileImg />
-                    <p>woon</p>
+                    <p>{state.user.name}</p>
                 </div>
-                <Button variant="contained" onClick={() => navigate("/join")} >LogOut</Button>
+                <Button variant="contained" onClick={() => {
+                    dispatch(logoutFB());
+                    navigate("/")
+                }} >LogOut</Button>
             </ProfileSection>) : (<div>
                 <Button variant="contained" onClick={() => navigate("/join")} >회원가입</Button>
                 <Button sx={{ ml: "5px" }} variant="contained" onClick={() => navigate("/login")}>로그인</Button>

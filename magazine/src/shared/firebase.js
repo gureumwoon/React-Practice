@@ -1,4 +1,8 @@
-import { initializeApp } from 'firebase/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import 'firebase/compat/database';
+import { getStorage } from 'firebase/storage'
+import { initializeApp, firebase } from 'firebase/app';
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
@@ -17,5 +21,8 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth();
 export const db = getFirestore(app);
+export const apiKey = firebaseConfig.apiKey
+export const storage = getStorage(app);
+
 
 export default app;

@@ -1,7 +1,6 @@
 // user.js
-import { db, auth } from "./../../shared/firebase";
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { collection, getDoc, getDocs, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { auth } from "../../shared/firebase";
+import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, setPersistence, browserSessionPersistence } from 'firebase/auth';
 
 
 // Actions
@@ -27,24 +26,117 @@ export function logOutUser(user) {
 }
 
 // middlewares
-export const signup = async (event) => {
-    event.preventDefault();
-    try {
-        const user = await createUserWithEmailAndPassword(
+export const signupFB = (user_id, user_pw, name) => {
+    return async function (dispatch) {
+        createUserWithEmailAndPassword(
             auth,
             user_id,
             user_pw
-        );
-        console.log(user)
+        ).then((user) => {
+            console.log(user)
+            const updateprofiluser = auth.currentUser;
+            updateProfile(updateprofiluser, {
+                displayName: name,
+            }).then(() => {
+                dispatch(accountUser({
+                    user_id,
+                    name,
+                    uid: user.user.uid
+                }))
+            }).catch((error) => {
+                console.log(error)
+            })
+        }).catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            if (errorCode === 'auth/email-already-in-use') {
+                alert('이미 존재하는 Email입니다.');
+            }
+            console.log(errorCode, errorMessage)
+        })
+        // const user_doc = await addDoc(collection(db, "users"), {
+        //     user_id,
+        //     name
+        // // });
+        // console.log(user_doc.id)
+    }
 
-        const user_doc = await addDoc(collection(db, "users"), {
-            user_id: user.user.email,
-            name: nameRef.current.value,
-        });
-        console.log(user_doc.id)
-        window.alert(`환영해요! ${nameRef.current.value}님 :)! 로그인도 부탁드려요!`);
-        navigate("/login")
-    } catch (error) {
-        console.log(error);
+}
+
+export const loginFB = (user_id, user_pw) => {
+    return function (dispatch) {
+        setPersistence(auth, browserSessionPersistence)
+            .then(() => {
+                const Auth = auth;
+                signInWithEmailAndPassword(Auth, user_id, user_pw)
+                    .then((user) => {
+                        console.log(user)
+                        dispatch(
+                            logInUser({
+                                user_id,
+                                name: user.user.displayName,
+                                uid: user.user.uid
+                            })
+                        )
+                        console.log(user.user.uid)
+                    }).catch((error) => {
+                        window.alert("아이디 또는 비밀번호가 올바르지 않습니다!");
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorCode, errorMessage)
+                    })
+            })
+            .catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage)
+            })
     }
 }
+
+export const logoutFB = () => {
+    return function (dispatch) {
+        auth.signOut().then(() => {
+            dispatch(logOutUser());
+        })
+    }
+}
+
+export const loginCheckFB = () => {
+    return function (dispatch) {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                dispatch(logInUser({
+                    name: user.displayName,
+                    user_id: user.email,
+                    uid: user.uid
+                }))
+            } else {
+                dispatch(logOutUser())
+            }
+        })
+    }
+}
+
+// Reducer
+export default function reducer(state = initialState, action = {}) {
+    switch (action.type) {
+        case ACCOUNT:
+            state.user = { ...action.user };
+            state.is_login = true;
+            return state;
+        case LOGIN:
+            state.user = { ...action.user }
+            console.log(state.user)
+            state.is_login = true;
+            return state;
+        case LOGOUT:
+            state.user = {};
+            state.is_login = false;
+            return state;
+        default:
+            return state;
+    }
+}
+

@@ -1,47 +1,85 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import Nav from '../components/Nav'
+import { previewImg } from '../redux/modules/image';
+import { addpostFB } from '../redux/modules/post';
 
 function Upload() {
+    const dispatch = useDispatch();
+    const preview = useSelector((state) => state.image.preview)
+
+    const [contents, setContents] = useState('')
+    const [layout, setLayout] = useState('right');
+    const [imgUrl, setImgUrl] = useState()
+    const [imgName, setImgName] = useState("");
+
+    const selectImg = (event) => {
+        const reader = new FileReader();
+        const {
+            target: { files },
+        } = event;
+
+        const theFile = files[0]
+
+        reader.readAsDataURL(theFile)
+        reader.onloadend = () => {
+            setImgUrl(reader.result)
+            dispatch(previewImg(reader.result))
+        }
+        setImgName(theFile.name);
+    }
+
+    const isChecked = (e) => {
+        if (e.target.checked) {
+            setLayout(e.target.value)
+        }
+    }
+
+    const uploadPost = () => {
+        dispatch(addpostFB(contents, layout))
+    }
+
+
     return (
         <section>
             <Nav />
             <h1 style={{ textAlign: "left" }}>게시글 작성</h1>
             <UploadImgSection>
-                <input placeholder="사진을 선택 해주세요" />
+                <input defaultValue={imgName} placeholder="사진을 선택 해주세요" />
                 <button>
                     <label htmlFor="upload-input">파일찾기</label>
                 </button>
-                <HiddenInput id="upload-input" type="file" accept="img/*" required multiple />
+                <HiddenInput id="upload-input" type="file" accept="img/*" onChange={selectImg} />
             </UploadImgSection>
             <LayOutTxt>레이아웃 고르기</LayOutTxt>
             <div style={{ textAlign: "left", padding: "16px 0" }}>
-                <input id="img-right" type="radio" />
+                <input id="img-right" type="radio" value="right" onChange={isChecked} />
                 <label htmlFor="img-right">
                     <strong>오른쪽에 이미지 왼쪽에 텍스트</strong>
                 </label>
             </div>
             <ContentSection>
                 <p></p>
-                <img alt="" />
+                <img src={imgUrl ? imgUrl : 'https://user-images.githubusercontent.com/75834421/124501682-fb25fd00-ddfc-11eb-93ec-c0330dff399b.jpg'} alt="" />
             </ContentSection>
             <div style={{ textAlign: "left", padding: "16px 0" }}>
-                <input id="img-left" type="radio" />
+                <input id="img-left" type="radio" value="left" onChange={isChecked} />
                 <label htmlFor="img-left">
                     <strong>왼쪽에 이미지 오른쪽에 텍스트</strong>
                 </label>
             </div>
             <ContentSection>
-                <img alt="" />
+                <img src={imgUrl ? imgUrl : 'https://user-images.githubusercontent.com/75834421/124501682-fb25fd00-ddfc-11eb-93ec-c0330dff399b.jpg'} alt="" />
                 <p></p>
             </ContentSection>
             <div style={{ marginTop: "25px" }}>
                 <TextAreaLabel htmlFor='uploa-txt'>
                     <p>게시물 내용</p>
                 </TextAreaLabel>
-                <TextArea rows="10" id="upload-txt" placeholder='게시글 작성'></TextArea>
+                <TextArea rows="10" id="upload-txt" placeholder='게시글 작성' onChange={(e) => { setContents(e.target.value) }}></TextArea>
             </div>
-            <UploadBtn>게시글 작성</UploadBtn>
+            <UploadBtn onClick={uploadPost}>게시글 작성</UploadBtn>
         </section>
     )
 }

@@ -4,18 +4,26 @@ import styled from 'styled-components';
 import CreateIcon from '@mui/icons-material/Create';
 import Nav from '../components/Nav'
 import PostCard from '../components/PostCard';
+import { useSelector } from 'react-redux';
 
-function Main() {
-    const navigate = useNavigate();
-    return (
-        <Section>
-            <Nav />
-            <PostCard />
-            <CreateBtn onClick={() => { navigate("/upload") }}>
-                <CreateIcon />
-            </CreateBtn>
-        </Section >
-    )
+function Main(props) {
+  const post_list = useSelector((state) => state.post.list)
+  const navigate = useNavigate();
+  return (
+    <Section>
+      <Nav />
+      {
+        post_list.map((p, i) => {
+          return (
+            <PostCard key={p.id} {...p} />
+          )
+        })
+      }
+      <CreateBtn onClick={() => { navigate("/upload") }}>
+        <CreateIcon />
+      </CreateBtn>
+    </Section >
+  )
 }
 
 const Section = styled.section`
