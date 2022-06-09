@@ -1,6 +1,6 @@
 // post.js
 import { auth, db, storage } from "../../shared/firebase";
-import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import moment from 'moment';
 
@@ -37,6 +37,19 @@ const initialPost = {
 }
 
 // middlewares
+export const loadpostFB = () => {
+    return async function (dispatch) {
+        const post_data = await getDocs(collection(db, "post"))
+
+        let post_list = [];
+
+        post_data.forEach((p) => {
+            post_list.push({ id: p.id, ...p.data() })
+        })
+
+        dispatch(loadPost(post_list))
+    }
+}
 
 export const addpostFB = (contents = "", layout = "right", image_url = "") => {
     return async function (dispatch, getState) {
@@ -94,6 +107,9 @@ export const deletepostFB = (post_id) => {
 // reducers
 export default function reducer(state = initialState, action = {}) {
     switch (action.type) {
+        case LOAD: {
+            return { list: action.post_list }
+        }
         case ADD:
             console.log("action", action.post)
             state.list.unshift(action.post);

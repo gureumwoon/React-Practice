@@ -18,7 +18,7 @@ function PostCard(props) {
                 <ProfileSection>
                     <div>
                         <ProfileImg />
-                        <p>{props.user_info.name}</p>
+                        <p>{props.name}</p>
                     </div>
                     <div>
                         {props.is_me && <DeleteBtn onClick={deletePost}>삭제하기</DeleteBtn>}

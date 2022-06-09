@@ -8,7 +8,8 @@ import { useSelector } from 'react-redux';
 
 function Main(props) {
   const post_list = useSelector((state) => state.post.list)
-  const user_info = useSelector((state) => state.user.user);
+  console.log("post_list", post_list)
+  const user_if = useSelector((state) => state.user.user);
   const user = useSelector((state) => state.user)
   const navigate = useNavigate();
   return (
@@ -16,13 +17,14 @@ function Main(props) {
       <Nav />
       {
         post_list.map((p, i) => {
-          if (p.user_info.user_id === user_info.uid) {
+          console.log('p', { ...p })
+          if (p.user_id === user_if?.uid) {
             return (
-              <PostCard key={p.id} {...p} is_me="is_me" />
+              <PostCard key={p.id} {...p} is_me="is_me" onClick={() => { navigate("/") }} />
             )
           } else {
             return (
-              <PostCard key={p.id} {...p} />
+              <PostCard key={p.id} {...p} onClick={() => { navigate("/") }} />
             )
           }
         })
