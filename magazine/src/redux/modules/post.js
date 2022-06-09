@@ -1,6 +1,6 @@
 // post.js
 import { auth, db, storage } from "../../shared/firebase";
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import moment from 'moment';
 
@@ -18,8 +18,8 @@ export const loadPost = (post_list) => {
 export const addPost = (post) => {
     return { type: ADD, post };
 }
-export const deletePost = (post) => {
-    return { type: DELETE, post }
+export const deletePost = (post_id) => {
+    return { type: DELETE, post_id }
 }
 
 
@@ -61,7 +61,7 @@ export const addpostFB = (contents = "", layout = "right", image_url = "") => {
 
         const _upload = await uploadBytes(ref(storage, `images/${user_info.user_id}`), image_url)
 
-        const _getUrl = await getDownloadURL(_upload.ref)
+        await getDownloadURL(_upload.ref)
             .then((url) => {
                 addDoc(collection(db, "post"), ({ ...user_info, ..._post })).then((doc) => {
                     let post = { user_info, ..._post, id: doc.id }
@@ -71,16 +71,38 @@ export const addpostFB = (contents = "", layout = "right", image_url = "") => {
                     console.log("error", error)
                 })
             })
-        console.log(_getUrl)
     }
 }
 
+export const deletepostFB = (post_id) => {
+    return async function (dispatch, getState) {
+        if (!post_id) {
+            window.alert('아이디가 엄서용')
+            return
+        }
+        const docRef = doc(db, "post", post_id)
+        await deleteDoc(docRef);
+
+        const post_list = getState().post.list
+        const post_index = post_list.findIndex((p) => {
+            return p.id === post_id
+        })
+        dispatch(deletePost(post_index))
+    }
+}
+
+// reducers
 export default function reducer(state = initialState, action = {}) {
     switch (action.type) {
         case ADD:
             console.log("action", action.post)
             state.list.unshift(action.post);
             return state;
+        case DELETE:
+            const newPostList = state.list.filter((p, i) => {
+                return action.post_index === i
+            })
+            return { list: newPostList }
         default:
             return state;
     }

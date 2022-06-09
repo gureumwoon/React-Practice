@@ -8,20 +8,28 @@ import { useSelector } from 'react-redux';
 
 function Main(props) {
   const post_list = useSelector((state) => state.post.list)
+  const user_info = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user)
   const navigate = useNavigate();
   return (
     <Section>
       <Nav />
       {
         post_list.map((p, i) => {
-          return (
-            <PostCard key={p.id} {...p} />
-          )
+          if (p.user_info.user_id === user_info.uid) {
+            return (
+              <PostCard key={p.id} {...p} is_me="is_me" />
+            )
+          } else {
+            return (
+              <PostCard key={p.id} {...p} />
+            )
+          }
         })
       }
-      <CreateBtn onClick={() => { navigate("/upload") }}>
+      {user.is_login && <CreateBtn onClick={() => { navigate("/upload") }}>
         <CreateIcon />
-      </CreateBtn>
+      </CreateBtn>}
     </Section >
   )
 }
