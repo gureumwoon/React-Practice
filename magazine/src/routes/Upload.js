@@ -11,11 +11,12 @@ function Upload() {
 
     const [contents, setContents] = useState('')
     const [layout, setLayout] = useState('right');
-    const [imgUrl, setImgUrl] = useState()
+    const [attachment, setAttachment] = useState()
     const [imgName, setImgName] = useState("");
 
     const selectImg = (event) => {
         const reader = new FileReader();
+
         const {
             target: { files },
         } = event;
@@ -23,9 +24,12 @@ function Upload() {
         const theFile = files[0]
 
         reader.readAsDataURL(theFile)
-        reader.onloadend = () => {
-            setImgUrl(reader.result)
-            dispatch(previewImg(reader.result))
+        reader.onloadend = (finishedEvent) => {
+            const {
+                currentTarget: { result }
+            } = finishedEvent
+            setAttachment(result)
+            dispatch(previewImg(result))
         }
         setImgName(theFile.name);
     }
@@ -37,7 +41,7 @@ function Upload() {
     }
 
     const uploadPost = () => {
-        dispatch(addpostFB(contents, layout))
+        dispatch(addpostFB(contents, layout, attachment))
     }
 
 
@@ -61,7 +65,7 @@ function Upload() {
             </div>
             <ContentSection>
                 <p></p>
-                <img src={imgUrl ? imgUrl : 'https://user-images.githubusercontent.com/75834421/124501682-fb25fd00-ddfc-11eb-93ec-c0330dff399b.jpg'} alt="" />
+                <img src={attachment ? attachment : 'https://user-images.githubusercontent.com/75834421/124501682-fb25fd00-ddfc-11eb-93ec-c0330dff399b.jpg'} alt="" />
             </ContentSection>
             <div style={{ textAlign: "left", padding: "16px 0" }}>
                 <input id="img-left" type="radio" value="left" onChange={isChecked} />
@@ -70,7 +74,7 @@ function Upload() {
                 </label>
             </div>
             <ContentSection>
-                <img src={imgUrl ? imgUrl : 'https://user-images.githubusercontent.com/75834421/124501682-fb25fd00-ddfc-11eb-93ec-c0330dff399b.jpg'} alt="" />
+                <img src={attachment ? attachment : 'https://user-images.githubusercontent.com/75834421/124501682-fb25fd00-ddfc-11eb-93ec-c0330dff399b.jpg'} alt="" />
                 <p></p>
             </ContentSection>
             <div style={{ marginTop: "25px" }}>

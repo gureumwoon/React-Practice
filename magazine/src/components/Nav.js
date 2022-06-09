@@ -24,7 +24,7 @@ function Nav() {
             <Link to="/">
                 <HomeIcon color="primary" fontSize="large" />
             </Link>
-            {state.is_login && is_session ? (<ProfileSection>
+            {state?.is_login && is_session ? (<ProfileSection>
                 <div>
                     <ProfileImg />
                     <p>{state.user.name}</p>

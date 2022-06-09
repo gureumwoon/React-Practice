@@ -38,7 +38,7 @@ const initialPost = {
 
 // middlewares
 
-export const addpostFB = (contents = "", layout = "right") => {
+export const addpostFB = (contents = "", layout = "right", image_url = "") => {
     return async function (dispatch, getState) {
         const _user = getState().user.user;
         console.log("user", _user)
@@ -52,29 +52,24 @@ export const addpostFB = (contents = "", layout = "right") => {
             ...initialPost,
             layout,
             contents,
+            image_url,
             insert_date: moment().format('YYYY-MM-DD hh:mm:ss'),
         }
-        const _image = getState().image.image_url
-        console.log("image", _image)
 
         console.log(user_info.user_id);
         console.log({ ...user_info, ..._post });
 
-        const _upload = await uploadBytes(ref(storage, `images/${user_info.user_id}`), _image)
-        console.log(_upload)
+        const _upload = await uploadBytes(ref(storage, `images/${user_info.user_id}`), image_url)
 
         const _getUrl = await getDownloadURL(_upload.ref)
             .then((url) => {
-                return url;
-            }).then((url) => {
-                addDoc(collection(db, "post"), ({ ...user_info, ..._post, image_url: url, })).then((doc) => {
-                    let post = { user_info, ..._post, id: doc.id, image_url: url }
+                addDoc(collection(db, "post"), ({ ...user_info, ..._post })).then((doc) => {
+                    let post = { user_info, ..._post, id: doc.id }
+                    console.log("post", post)
                     dispatch(addPost(post))
                 }).catch((error) => {
                     console.log("error", error)
                 })
-            }).catch((error) => {
-                console.log("error2", error)
             })
         console.log(_getUrl)
     }
@@ -83,6 +78,7 @@ export const addpostFB = (contents = "", layout = "right") => {
 export default function reducer(state = initialState, action = {}) {
     switch (action.type) {
         case ADD:
+            console.log("action", action.post)
             state.list.unshift(action.post);
             return state;
         default:
